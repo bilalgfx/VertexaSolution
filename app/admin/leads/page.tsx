@@ -55,19 +55,40 @@ const ALL_COLUMNS: { key: ColKey; label: string; default: boolean }[] = [
 ]
 
 const COLUMN_MAP: Record<string, string> = {
+  // Name
   'first name': 'first_name', 'firstname': 'first_name', 'first_name': 'first_name',
   'last name': 'last_name', 'lastname': 'last_name', 'last_name': 'last_name',
   'name': 'full_name', 'full name': 'full_name', 'fullname': 'full_name', 'contact name': 'full_name', 'contact': 'full_name',
+  // Email
   'email': 'email', 'email address': 'email', 'e-mail': 'email', 'mail': 'email',
-  'company': 'company', 'company name': 'company', 'organization': 'company', 'business': 'company', 'business name': 'company',
-  'phone': 'phone', 'phone number': 'phone', 'mobile': 'phone', 'cell': 'phone', 'telephone': 'phone', 'mobile number': 'phone', 'contact number': 'phone',
+  // Company
+  'company': 'company', 'company name': 'company', 'company name for emails': 'company',
+  'organization': 'company', 'business': 'company', 'business name': 'company',
+  // Phone — Apollo exports multiple phone columns, we prioritise work > mobile > corporate
+  'phone': 'phone', 'phone number': 'phone', 'contact number': 'phone', 'telephone': 'phone',
+  'work direct phone': 'phone_work', 'direct phone': 'phone_work',
+  'mobile phone': 'phone_mobile', 'mobile': 'phone_mobile', 'mobile number': 'phone_mobile', 'cell': 'phone_mobile',
+  'home phone': 'phone_home',
+  'corporate phone': 'phone_corp',
+  'other phone': 'phone_other',
+  'company phone': 'phone_company',
+  // Title
   'title': 'title', 'job title': 'title', 'position': 'title', 'role': 'title', 'designation': 'title',
+  // Industry
   'industry': 'industry', 'category': 'industry', 'vertical': 'industry', 'type': 'industry', 'sector': 'industry', 'niche': 'industry',
-  'location': 'location', 'city': 'location', 'country': 'location', 'state': 'location', 'address': 'location', 'region': 'location',
-  'linkedin': 'linkedin_url', 'linkedin url': 'linkedin_url', 'linkedin_url': 'linkedin_url', 'linkedin profile': 'linkedin_url',
+  // Location — Apollo splits into city/state/country, we combine in normalizeLead
+  'location': 'location', 'address': 'location', 'region': 'location',
+  'city': 'city', 'state': 'state', 'country': 'country',
+  // LinkedIn
+  'linkedin': 'linkedin_url', 'linkedin url': 'linkedin_url', 'linkedin_url': 'linkedin_url',
+  'linkedin profile': 'linkedin_url', 'person linkedin url': 'linkedin_url',
+  // Facebook
   'facebook': 'facebook_url', 'facebook url': 'facebook_url', 'facebook profile': 'facebook_url', 'fb': 'facebook_url',
+  // Instagram
   'instagram': 'instagram_url', 'instagram url': 'instagram_url', 'ig': 'instagram_url', 'insta': 'instagram_url',
-  'twitter': 'twitter_url', 'twitter url': 'twitter_url', 'x': 'twitter_url', 'x url': 'twitter_url', 'tweet': 'twitter_url',
+  // Twitter
+  'twitter': 'twitter_url', 'twitter url': 'twitter_url', 'x': 'twitter_url', 'x url': 'twitter_url',
+  // Website
   'website': 'website', 'website url': 'website', 'web': 'website', 'url': 'website', 'site': 'website',
 }
 
@@ -103,11 +124,14 @@ function normalizeLead(p: ParsedLead) {
     first_name = parts[0] || ''
     last_name = parts.slice(1).join(' ')
   }
+  // Pick best phone: work > mobile > corporate > home > other > company > generic
+  const phone = p.phone_work || p.phone_mobile || p.phone_corp || p.phone_home || p.phone_other || p.phone_company || p.phone || null
+  // Combine city/state/country into location if not already a combined string
+  const location = p.location || [p.city, p.state, p.country].filter(Boolean).join(', ') || null
   return {
     first_name: first_name || null, last_name: last_name || null,
     email: p.email || null, company: p.company || null,
-    title: p.title || null, phone: p.phone || null,
-    industry: p.industry || null, location: p.location || null,
+    title: p.title || null, phone, industry: p.industry || null, location,
     linkedin_url: p.linkedin_url || null, facebook_url: p.facebook_url || null,
     instagram_url: p.instagram_url || null, twitter_url: p.twitter_url || null,
     website: p.website || null,
