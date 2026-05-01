@@ -6,6 +6,7 @@ import {
   Building2, MapPin, Search, X, FileText,
   AlertCircle, Download, SlidersHorizontal, Eye, Globe,
 } from 'lucide-react'
+import EmailComposer from '@/app/components/admin/EmailComposer'
 
 const IconLinkedIn = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -176,6 +177,7 @@ export default function Leads() {
   const [searchQuery, setSearchQuery] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [composingLead, setComposingLead] = useState<{ email: string; name: string; company: string | null } | null>(null)
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
@@ -298,6 +300,7 @@ export default function Leads() {
     url ? <a href={url} target="_blank" rel="noopener noreferrer" className={`${color} hover:opacity-80 transition-opacity`}><Icon size={14} /></a> : null
 
   return (
+    <>
     <div className="flex h-full">
       {/* Category Sidebar */}
       <div className="w-52 shrink-0 border-r border-white/5 overflow-y-auto py-5 px-3">
@@ -517,10 +520,18 @@ export default function Leads() {
                         </td>
                       )}
                       <td className="px-4 py-3">
-                        <button onClick={() => deleteLead(lead.id)} disabled={deletingId === lead.id}
-                          className="opacity-0 group-hover:opacity-100 text-zinc-600 hover:text-red-400 transition-all">
-                          <Trash2 size={14} />
-                        </button>
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                          {lead.email && (
+                            <button onClick={() => setComposingLead({ email: lead.email!, name: [lead.first_name, lead.last_name].filter(Boolean).join(' '), company: lead.company })}
+                              className="text-zinc-600 hover:text-violet-400 transition-colors" title="Send email">
+                              <Mail size={14} />
+                            </button>
+                          )}
+                          <button onClick={() => deleteLead(lead.id)} disabled={deletingId === lead.id}
+                            className="text-zinc-600 hover:text-red-400 transition-colors">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -538,5 +549,14 @@ export default function Leads() {
         )}
       </div>
     </div>
+
+    <EmailComposer
+      isOpen={!!composingLead}
+      onClose={() => setComposingLead(null)}
+      defaultTo={composingLead?.email ?? ''}
+      defaultToName={composingLead?.name}
+      defaultSubject={composingLead?.company ? `AI Automation for ${composingLead.company}` : 'AI Automation Services — Vertexa Solution'}
+    />
+    </>
   )
 }
