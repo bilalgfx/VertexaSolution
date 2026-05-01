@@ -19,6 +19,10 @@ export interface Lead {
   company: string | null
   title: string | null
   linkedin_url: string | null
+  facebook_url: string | null
+  instagram_url: string | null
+  twitter_url: string | null
+  website: string | null
   phone: string | null
   industry: string | null
   employees: string | null

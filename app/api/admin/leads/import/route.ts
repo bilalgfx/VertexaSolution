@@ -23,6 +23,10 @@ export async function POST(request: NextRequest) {
     industry: l.industry || null,
     location: l.location || null,
     linkedin_url: l.linkedin_url || null,
+    facebook_url: l.facebook_url || null,
+    instagram_url: l.instagram_url || null,
+    twitter_url: l.twitter_url || null,
+    website: l.website || null,
     source: 'csv',
     status: 'new',
   }))
