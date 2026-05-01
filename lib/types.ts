@@ -11,28 +11,6 @@ export interface ContactSubmission {
   created_at: string
 }
 
-export interface Lead {
-  id: string
-  first_name: string | null
-  last_name: string | null
-  email: string | null
-  company: string | null
-  title: string | null
-  linkedin_url: string | null
-  facebook_url: string | null
-  instagram_url: string | null
-  twitter_url: string | null
-  website: string | null
-  phone: string | null
-  industry: string | null
-  employees: string | null
-  location: string | null
-  status: 'new' | 'contacted' | 'email_sent' | 'qualified' | 'closed'
-  notes: string | null
-  source: string
-  created_at: string
-}
-
 
 export interface DashboardStats {
   totalSubmissions: number

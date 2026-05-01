@@ -2,12 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Inbox, Users, BarChart2, LogOut, Zap } from 'lucide-react'
+import { LayoutDashboard, Inbox, BarChart2, LogOut, Zap } from 'lucide-react'
 
 const nav = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/submissions', label: 'Submissions', icon: Inbox },
-  { href: '/admin/leads', label: 'Lead Generation', icon: Users },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart2 },
 ]
 
