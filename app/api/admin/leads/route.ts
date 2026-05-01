@@ -51,7 +51,7 @@ export async function PATCH(request: NextRequest) {
   if (notes !== undefined) patch.notes = notes
 
   const db = getAdminClient()
-  const { error } = await db.from('leads').update(patch).eq('id', id)
+  const { error } = await db.from('leads').update(patch as never).eq('id', id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
   return Response.json({ success: true })
