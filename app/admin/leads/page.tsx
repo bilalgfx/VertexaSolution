@@ -3,10 +3,22 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   Upload, Folder, FolderOpen, Trash2, Mail, Phone,
-  Building2, MapPin, ExternalLink, Search, X, FileText,
-  AlertCircle, Download, SlidersHorizontal, Eye, Instagram,
-  Facebook, Twitter, Globe, Linkedin
+  Building2, MapPin, Search, X, FileText,
+  AlertCircle, Download, SlidersHorizontal, Eye, Globe,
 } from 'lucide-react'
+
+const IconLinkedIn = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+)
+const IconFacebook = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+)
+const IconInstagram = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+)
+const IconTwitter = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+)
 import type { Lead } from '@/lib/types'
 
 const STATUS_OPTIONS = ['new', 'contacted', 'email_sent', 'qualified', 'closed'] as const
@@ -424,10 +436,10 @@ export default function Leads() {
                       {(visibleCols.has('linkedin') || visibleCols.has('facebook') || visibleCols.has('instagram') || visibleCols.has('twitter') || visibleCols.has('website')) && (
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            {visibleCols.has('linkedin') && <SocialLink url={lead.linkedin_url} icon={Linkedin} color="text-blue-400" />}
-                            {visibleCols.has('facebook') && <SocialLink url={lead.facebook_url} icon={Facebook} color="text-blue-500" />}
-                            {visibleCols.has('instagram') && <SocialLink url={lead.instagram_url} icon={Instagram} color="text-pink-400" />}
-                            {visibleCols.has('twitter') && <SocialLink url={lead.twitter_url} icon={Twitter} color="text-sky-400" />}
+                            {visibleCols.has('linkedin') && <SocialLink url={lead.linkedin_url} icon={IconLinkedIn} color="text-blue-400" />}
+                            {visibleCols.has('facebook') && <SocialLink url={lead.facebook_url} icon={IconFacebook} color="text-blue-500" />}
+                            {visibleCols.has('instagram') && <SocialLink url={lead.instagram_url} icon={IconInstagram} color="text-pink-400" />}
+                            {visibleCols.has('twitter') && <SocialLink url={lead.twitter_url} icon={IconTwitter} color="text-sky-400" />}
                             {visibleCols.has('website') && <SocialLink url={lead.website} icon={Globe} color="text-zinc-400" />}
                             {!lead.linkedin_url && !lead.facebook_url && !lead.instagram_url && !lead.twitter_url && !lead.website && <span className="text-zinc-600 text-xs">—</span>}
                           </div>
