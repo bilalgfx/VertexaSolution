@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     payload.organization_num_employees_ranges = ranges[employeeRange]
   }
 
-  const response = await fetch('https://api.apollo.io/api/v1/mixed_people/search', {
+  const response = await fetch('https://api.apollo.io/v1/mixed_people/search', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'X-Api-Key': apiKey },
     body: JSON.stringify(payload),
@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
 
   if (!response.ok) {
     const err = await response.text()
-    console.error('Apollo error:', err)
-    return Response.json({ error: 'Apollo API error' }, { status: 502 })
+    console.error('Apollo error:', response.status, err)
+    return Response.json({ error: `Apollo error ${response.status}: ${err}` }, { status: 502 })
   }
 
   const data = await response.json()
