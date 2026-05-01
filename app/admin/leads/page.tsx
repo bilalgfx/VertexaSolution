@@ -175,6 +175,8 @@ export default function Leads() {
   const [statusFilter, setStatusFilter] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkDeleting, setBulkDeleting] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [uploadSuccess, setUploadSuccess] = useState('')
@@ -257,6 +259,31 @@ export default function Leads() {
     setDeletingId(id)
     await fetch('/api/admin/leads', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
     setLeads(prev => prev.filter(l => l.id !== id)); setDeletingId(null)
+  }
+
+  const deleteSelected = async () => {
+    if (selectedIds.size === 0) return
+    setBulkDeleting(true)
+    await Promise.all([...selectedIds].map(id =>
+      fetch('/api/admin/leads', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    ))
+    setLeads(prev => prev.filter(l => !selectedIds.has(l.id)))
+    setSelectedIds(new Set())
+    setBulkDeleting(false)
+  }
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s })
+  }
+
+  const allVisibleSelected = filteredLeads.length > 0 && filteredLeads.every(l => selectedIds.has(l.id))
+
+  const toggleSelectAll = () => {
+    if (allVisibleSelected) {
+      setSelectedIds(prev => { const s = new Set(prev); filteredLeads.forEach(l => s.delete(l.id)); return s })
+    } else {
+      setSelectedIds(prev => { const s = new Set(prev); filteredLeads.forEach(l => s.add(l.id)); return s })
+    }
   }
 
   const toggleCol = (key: ColKey) => {
@@ -366,6 +393,12 @@ export default function Leads() {
                 <X size={13} />Clear
               </button>
             )}
+            {selectedIds.size > 0 && (
+              <button onClick={deleteSelected} disabled={bulkDeleting}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 text-sm font-medium transition-all disabled:opacity-50">
+                <Trash2 size={13} />{bulkDeleting ? 'Deleting...' : `Delete Selected (${selectedIds.size})`}
+              </button>
+            )}
 
             {/* Column Picker */}
             <div className="relative ml-auto">
@@ -398,10 +431,13 @@ export default function Leads() {
         {/* Table */}
         {filteredLeads.length > 0 && (
           <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden" onClick={() => setShowColPicker(false)}>
-            <div className="overflow-x-auto">
+            <div className="overflow-auto max-h-[calc(100vh-280px)]">
               <table className="w-full text-sm">
-                <thead>
+                <thead className="sticky top-0 bg-[#111111] z-10">
                   <tr className="border-b border-white/5">
+                    <th className="px-4 py-3 w-10">
+                      <input type="checkbox" checked={allVisibleSelected} onChange={toggleSelectAll} className="accent-violet-500 cursor-pointer" />
+                    </th>
                     {visibleCols.has('name') && <th className="text-left px-4 py-3 text-xs text-zinc-600 font-medium whitespace-nowrap">Name</th>}
                     {visibleCols.has('company') && <th className="text-left px-4 py-3 text-xs text-zinc-600 font-medium whitespace-nowrap">Company</th>}
                     {visibleCols.has('title') && <th className="text-left px-4 py-3 text-xs text-zinc-600 font-medium whitespace-nowrap">Title</th>}
@@ -417,7 +453,10 @@ export default function Leads() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filteredLeads.map(lead => (
-                    <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <tr key={lead.id} className={`transition-colors group ${selectedIds.has(lead.id) ? 'bg-violet-500/5' : 'hover:bg-white/[0.02]'}`}>
+                      <td className="px-4 py-3">
+                        <input type="checkbox" checked={selectedIds.has(lead.id)} onChange={() => toggleSelect(lead.id)} className="accent-violet-500 cursor-pointer" />
+                      </td>
                       {visibleCols.has('name') && (
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2.5">
