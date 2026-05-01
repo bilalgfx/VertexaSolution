@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
   const { industry, title, location, employeeRange, keyword, page = 1 } = await request.json()
 
   const payload: Record<string, unknown> = {
-    api_key: apiKey,
     page,
     per_page: 25,
     person_titles: title ? [title] : undefined,
@@ -41,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   const response = await fetch('https://api.apollo.io/api/v1/mixed_people/search', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'X-Api-Key': apiKey },
     body: JSON.stringify(payload),
   })
 
