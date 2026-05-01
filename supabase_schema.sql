@@ -28,9 +28,9 @@ CREATE TABLE leads (
   industry TEXT,
   employees TEXT,
   location TEXT,
-  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'qualified', 'closed')),
+  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'email_sent', 'qualified', 'closed')),
   notes TEXT,
-  source TEXT DEFAULT 'apollo',
+  source TEXT DEFAULT 'csv',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

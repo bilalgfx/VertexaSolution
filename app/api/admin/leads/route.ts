@@ -42,11 +42,11 @@ export async function PATCH(request: NextRequest) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await request.json() as { id: string; status?: 'new' | 'contacted' | 'qualified' | 'closed'; notes?: string | null }
+  const body = await request.json() as { id: string; status?: 'new' | 'contacted' | 'email_sent' | 'qualified' | 'closed'; notes?: string | null }
   const { id, status, notes } = body
   if (!id) return Response.json({ error: 'ID required' }, { status: 400 })
 
-  const patch: { status?: 'new' | 'contacted' | 'qualified' | 'closed'; notes?: string | null } = {}
+  const patch: { status?: 'new' | 'contacted' | 'email_sent' | 'qualified' | 'closed'; notes?: string | null } = {}
   if (status !== undefined) patch.status = status
   if (notes !== undefined) patch.notes = notes
 

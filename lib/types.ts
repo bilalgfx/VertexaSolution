@@ -23,31 +23,12 @@ export interface Lead {
   industry: string | null
   employees: string | null
   location: string | null
-  status: 'new' | 'contacted' | 'qualified' | 'closed'
+  status: 'new' | 'contacted' | 'email_sent' | 'qualified' | 'closed'
   notes: string | null
   source: string
   created_at: string
 }
 
-export interface ApolloResult {
-  id: string
-  first_name: string
-  last_name: string
-  title: string
-  email_status: string
-  email: string | null
-  linkedin_url: string | null
-  phone_numbers: { raw_number: string }[]
-  organization: {
-    name: string
-    industry: string
-    estimated_num_employees: number | null
-    primary_domain: string | null
-  } | null
-  city: string | null
-  state: string | null
-  country: string | null
-}
 
 export interface DashboardStats {
   totalSubmissions: number
