@@ -1,11 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Target,
   Heart,
   Zap,
   Shield,
-  TrendingUp,
   Globe,
 } from "lucide-react";
 
@@ -39,24 +39,25 @@ const milestones = [
   { year: "2025", title: "Growing Fast", desc: "Now working with startups, growing businesses, and new brands across multiple industries — globally remote, always custom." },
 ];
 
+const founder = {
+  name: "Muhammad Bilal",
+  role: "Founder & CEO",
+  bio: "Entrepreneur and AI strategist with a background in growth and operations. Built Vertexa to give startups and businesses access to custom-built AI and software without the enterprise price tag.",
+  image: "/Founder.jpg",
+};
+
 const team = [
-  {
-    name: "Muhammad Bilal",
-    role: "Founder & CEO",
-    bio: "Entrepreneur and AI strategist with a background in growth and operations. Built Vertexa to give startups and businesses access to custom-built AI and software without the enterprise price tag.",
-    emoji: "👤",
-  },
   {
     name: "Jordan Kim",
     role: "CTO",
     bio: "AI/ML engineer with expertise in conversational AI, NLP, and full-stack development. Leads all technical delivery across AI, web, and app projects.",
-    emoji: "👤",
+    image: null,
   },
   {
     name: "Priya Sharma",
     role: "Head of Client Success",
     bio: "Strategy and delivery lead who oversees every client engagement from discovery to handoff. 40+ projects delivered, 98% satisfaction rate.",
-    emoji: "👤",
+    image: null,
   },
 ];
 
@@ -153,11 +154,32 @@ export default function AboutPage() {
             Builders, engineers, and strategists — people who've shipped real products and understand what it takes to deliver properly.
           </p>
         </div>
-        <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {team.map(({ name, role, bio, emoji }) => (
+
+        {/* Founder — centered */}
+        <div className="flex justify-center mb-8">
+          <div className="p-6 rounded-2xl bg-[#111111] border border-violet-500/20 hover:border-violet-500/40 transition-all text-center w-full max-w-xs">
+            <div className="w-24 h-24 rounded-full bg-violet-500/10 border-2 border-violet-500/30 overflow-hidden flex items-center justify-center mx-auto mb-4">
+              <Image
+                src={founder.image}
+                alt={founder.name}
+                width={96}
+                height={96}
+                className="w-full h-full object-cover"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+              />
+            </div>
+            <div className="font-bold mb-0.5">{founder.name}</div>
+            <div className="text-xs text-violet-400 font-medium mb-3">{founder.role}</div>
+            <div className="text-sm text-zinc-500 leading-relaxed">{founder.bio}</div>
+          </div>
+        </div>
+
+        {/* Rest of team */}
+        <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          {team.map(({ name, role, bio }) => (
             <div key={name} className="p-6 rounded-2xl bg-[#111111] border border-white/5 hover:border-violet-500/20 transition-all text-center">
-              <div className="w-16 h-16 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-3xl mx-auto mb-4">
-                {emoji}
+              <div className="w-16 h-16 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl text-zinc-600">👤</span>
               </div>
               <div className="font-bold mb-0.5">{name}</div>
               <div className="text-xs text-violet-400 font-medium mb-3">{role}</div>
