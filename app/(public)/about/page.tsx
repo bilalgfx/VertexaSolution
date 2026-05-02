@@ -165,7 +165,6 @@ export default function AboutPage() {
                 width={96}
                 height={96}
                 className="w-full h-full object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
               />
             </div>
             <div className="font-bold mb-0.5">{founder.name}</div>
