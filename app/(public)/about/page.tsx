@@ -48,15 +48,15 @@ const founder = {
 
 const team = [
   {
-    name: "Jordan Kim",
-    role: "CTO",
-    bio: "AI/ML engineer with expertise in conversational AI, NLP, and full-stack development. Leads all technical delivery across AI, web, and app projects.",
+    name: "Shameer Basharat",
+    role: "Developer & Team Manager",
+    bio: "Full-stack developer and project manager building software solutions for startups and enterprises. Leads our development team and ensures every project is delivered on time and to spec.",
     image: null,
   },
   {
-    name: "Priya Sharma",
-    role: "Head of Client Success",
-    bio: "Strategy and delivery lead who oversees every client engagement from discovery to handoff. 40+ projects delivered, 98% satisfaction rate.",
+    name: "Shahbaz Ali",
+    role: "UI/UX Designer",
+    bio: "Creative designer specializing in user interfaces and experiences. Shapes the look and feel of our web and app projects, ensuring they're not only functional but also a delight to use.",
     image: null,
   },
 ];
