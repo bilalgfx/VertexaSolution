@@ -67,11 +67,19 @@ export async function DELETE(request: NextRequest) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { id } = await request.json()
-  if (!id) return Response.json({ error: 'id required' }, { status: 400 })
-
+  const body = await request.json()
   const db = getAdminClient()
-  const { error } = await db.from('leads').delete().eq('id', id)
+
+  // Bulk delete
+  if (Array.isArray(body.ids) && body.ids.length > 0) {
+    const { error } = await db.from('leads').delete().in('id', body.ids)
+    if (error) return Response.json({ error: error.message }, { status: 500 })
+    return Response.json({ deleted: body.ids.length })
+  }
+
+  // Single delete
+  if (!body.id) return Response.json({ error: 'id or ids required' }, { status: 400 })
+  const { error } = await db.from('leads').delete().eq('id', body.id)
   if (error) return Response.json({ error: error.message }, { status: 500 })
   return Response.json({ success: true })
 }
