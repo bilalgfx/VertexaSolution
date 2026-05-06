@@ -7,17 +7,20 @@ type DB = {
         Row: {
           id: string; name: string; email: string; company: string | null
           website: string | null; service: string | null; budget: string | null
-          message: string | null; status: 'new' | 'contacted' | 'closed'; created_at: string
+          message: string | null; phone: string | null
+          status: 'new' | 'contacted' | 'closed'; created_at: string
         }
         Insert: {
           id?: string; name: string; email: string; company?: string | null
           website?: string | null; service?: string | null; budget?: string | null
-          message?: string | null; status?: 'new' | 'contacted' | 'closed'; created_at?: string
+          message?: string | null; phone?: string | null
+          status?: 'new' | 'contacted' | 'closed'; created_at?: string
         }
         Update: {
           id?: string; name?: string; email?: string; company?: string | null
           website?: string | null; service?: string | null; budget?: string | null
-          message?: string | null; status?: 'new' | 'contacted' | 'closed'; created_at?: string
+          message?: string | null; phone?: string | null
+          status?: 'new' | 'contacted' | 'closed'; created_at?: string
         }
         Relationships: []
       }
@@ -52,6 +55,51 @@ type DB = {
         Row: { id: string; page: string; referrer: string | null; created_at: string }
         Insert: { id?: string; page: string; referrer?: string | null; created_at?: string }
         Update: { id?: string; page?: string; referrer?: string | null; created_at?: string }
+        Relationships: []
+      }
+      admin_availability: {
+        Row: { id: string; day_of_week: number; start_time: string; end_time: string; is_active: boolean }
+        Insert: { id?: string; day_of_week: number; start_time: string; end_time: string; is_active?: boolean }
+        Update: { id?: string; day_of_week?: number; start_time?: string; end_time?: string; is_active?: boolean }
+        Relationships: []
+      }
+      appointments: {
+        Row: {
+          id: string; submission_id: string | null; contact_name: string | null
+          contact_email: string | null; contact_phone: string | null
+          scheduled_date: string; scheduled_time: string
+          status: 'confirmed' | 'cancelled'; notes: string | null
+          call_transcript: string | null; created_at: string
+        }
+        Insert: {
+          id?: string; submission_id?: string | null; contact_name?: string | null
+          contact_email?: string | null; contact_phone?: string | null
+          scheduled_date: string; scheduled_time: string
+          status?: 'confirmed' | 'cancelled'; notes?: string | null
+          call_transcript?: string | null; created_at?: string
+        }
+        Update: {
+          id?: string; submission_id?: string | null; contact_name?: string | null
+          contact_email?: string | null; contact_phone?: string | null
+          scheduled_date?: string; scheduled_time?: string
+          status?: 'confirmed' | 'cancelled'; notes?: string | null
+          call_transcript?: string | null; created_at?: string
+        }
+        Relationships: []
+      }
+      email_campaigns: {
+        Row: {
+          id: string; subject: string; body: string
+          recipient_count: number; status: 'sent' | 'failed'; sent_at: string
+        }
+        Insert: {
+          id?: string; subject: string; body: string
+          recipient_count?: number; status?: 'sent' | 'failed'; sent_at?: string
+        }
+        Update: {
+          id?: string; subject?: string; body?: string
+          recipient_count?: number; status?: 'sent' | 'failed'; sent_at?: string
+        }
         Relationships: []
       }
     }

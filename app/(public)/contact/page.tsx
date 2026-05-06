@@ -35,6 +35,7 @@ export default function ContactPage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     company: "",
     website: "",
     service: "",
@@ -211,6 +212,20 @@ export default function ContactPage() {
                       className="w-full px-4 py-3 rounded-xl bg-[#0a0a0a] border border-white/10 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 transition-colors"
                     />
                   </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                    Phone Number <span className="text-zinc-600">(optional — for our AI to follow up with you)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    placeholder="+1 555 000 0000"
+                    className="w-full px-4 py-3 rounded-xl bg-[#0a0a0a] border border-white/10 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 transition-colors"
+                  />
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4 mb-4">
