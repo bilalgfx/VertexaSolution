@@ -20,12 +20,13 @@ export async function POST(request: NextRequest) {
   const { keywords, industry, location, page_size = 20 } = await request.json()
 
   const payload: Record<string, unknown> = {
+    api_key: apiKey,
     per_page: Math.min(page_size, 50),
     page: 1,
   }
 
   if (keywords) payload.q_keywords = keywords
-  if (industry) payload.industry_tag_ids = [] // Apollo uses tag IDs; pass raw industry name via q_keywords fallback
+  if (industry) payload.industry_tag_ids = []
   if (location) payload.person_locations = [location]
 
   const res = await fetch('https://api.apollo.io/v1/mixed_people/search', {
@@ -40,7 +41,19 @@ export async function POST(request: NextRequest) {
 
   if (!res.ok) {
     const err = await res.text()
-    console.error('Apollo error:', err)
+    console.error('Apollo error:', res.status, err)
+    if (res.status === 403) {
+      return Response.json(
+        { error: 'Apollo API access denied (403). Check that your API key is valid and your Apollo plan includes API access.' },
+        { status: 502 }
+      )
+    }
+    if (res.status === 401) {
+      return Response.json(
+        { error: 'Apollo API key is invalid or missing.' },
+        { status: 502 }
+      )
+    }
     return Response.json({ error: `Apollo API error: ${res.status}` }, { status: 502 })
   }
 

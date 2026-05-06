@@ -111,24 +111,34 @@ CREATE TABLE outbound_call_logs (
 );
 
 -- RPC: atomically increment answered count on a campaign
-CREATE OR REPLACE FUNCTION increment_campaign_answered(campaign_id UUID)
-RETURNS VOID LANGUAGE plpgsql AS $$
+CREATE OR REPLACE FUNCTION public.increment_campaign_answered(campaign_id UUID)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 BEGIN
-  UPDATE outbound_campaigns SET answered = answered + 1 WHERE id = campaign_id;
+  UPDATE public.outbound_campaigns SET answered = answered + 1 WHERE id = campaign_id;
 END;
 $$;
 
 -- RPC: atomically increment interested / booked counts
-CREATE OR REPLACE FUNCTION increment_campaign_stat(campaign_id UUID, stat_col TEXT)
-RETURNS VOID LANGUAGE plpgsql AS $$
+CREATE OR REPLACE FUNCTION public.increment_campaign_stat(campaign_id UUID, stat_col TEXT)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 BEGIN
   IF stat_col = 'interested' THEN
-    UPDATE outbound_campaigns SET interested = interested + 1 WHERE id = campaign_id;
+    UPDATE public.outbound_campaigns SET interested = interested + 1 WHERE id = campaign_id;
   ELSIF stat_col = 'booked' THEN
-    UPDATE outbound_campaigns SET booked = booked + 1 WHERE id = campaign_id;
+    UPDATE public.outbound_campaigns SET booked = booked + 1 WHERE id = campaign_id;
   END IF;
 END;
 $$;
+
+-- Row Level Security (service_role bypasses RLS; anon access blocked by default)
+ALTER TABLE contact_submissions    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE leads                  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE page_views             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_availability     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE appointments           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE email_campaigns        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE outbound_campaigns     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE outbound_call_logs     ENABLE ROW LEVEL SECURITY;
 
 -- Indexes for performance
 CREATE INDEX idx_submissions_created_at ON contact_submissions (created_at DESC);
