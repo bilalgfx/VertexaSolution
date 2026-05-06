@@ -1,7 +1,11 @@
 import { getAdminClient } from '@/lib/supabase'
 
-// VAPI sends POST here for tool calls and call-end events
 export async function POST(request: Request) {
+  const secret = process.env.VAPI_WEBHOOK_SECRET
+  if (secret && request.headers.get('x-vapi-secret') !== secret) {
+    return new Response('Unauthorized', { status: 401 })
+  }
+
   const body = await request.json()
   const message = body.message
 
