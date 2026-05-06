@@ -178,7 +178,11 @@ export async function POST(request: Request) {
         ...(notes ? { notes } : {}),
       }
       if (call_log_id) {
+        const { data: logRow } = await db2.from('outbound_call_logs').select('campaign_id').eq('id', call_log_id).single()
         await db2.from('outbound_call_logs').update(updates).eq('id', call_log_id)
+        if (logRow?.campaign_id && interest_level === 'hot') {
+          await db2.rpc('increment_campaign_stat', { campaign_id: logRow.campaign_id, stat_col: 'interested' })
+        }
       }
       results.push({
         toolCallId,
