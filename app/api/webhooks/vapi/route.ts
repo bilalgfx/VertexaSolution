@@ -1,11 +1,43 @@
 import { getAdminClient } from '@/lib/supabase'
 
-// VAPI sends POST here when the assistant calls a tool function
+// VAPI sends POST here for tool calls and call-end events
 export async function POST(request: Request) {
   const body = await request.json()
-
-  // VAPI wraps tool calls in a message with type "tool-calls"
   const message = body.message
+
+  // Handle end-of-call report — update outbound call log status
+  if (message?.type === 'end-of-call-report') {
+    const callId = body.call?.id
+    const endedReason = body.endedReason ?? ''
+    if (callId) {
+      const db = getAdminClient()
+      const noAnswer = ['no-answer', 'busy', 'failed', 'call.start.error'].some(r => endedReason.includes(r))
+      const status = noAnswer ? 'no_answer' : 'answered'
+      const retryAt = noAnswer ? new Date(Date.now() + 30 * 60 * 1000).toISOString() : null
+
+      const { data: log } = await db
+        .from('outbound_call_logs')
+        .select('id, retry_count, campaign_id')
+        .eq('vapi_call_id', callId)
+        .single()
+
+      if (log) {
+        const newStatus = noAnswer && (log.retry_count ?? 0) < 1 ? 'retry_scheduled' : status
+        await db.from('outbound_call_logs').update({
+          status: newStatus,
+          retry_count: (log.retry_count ?? 0) + (noAnswer ? 1 : 0),
+          ...(retryAt && newStatus === 'retry_scheduled' ? { retry_at: retryAt } : {}),
+        }).eq('id', log.id)
+
+        // Update campaign answered count
+        if (!noAnswer && log.campaign_id) {
+          await db.rpc('increment_campaign_answered', { campaign_id: log.campaign_id })
+        }
+      }
+    }
+    return Response.json({ ok: true })
+  }
+
   if (!message || message.type !== 'tool-calls') {
     return Response.json({ results: [] })
   }
@@ -127,6 +159,28 @@ export async function POST(request: Request) {
         result: error
           ? `Booking failed: ${error.message}`
           : `Appointment confirmed for ${date} at ${time}.`,
+      })
+      continue
+    }
+
+    if (fn.name === 'save_lead_interest') {
+      const { call_log_id, email, interest_level, notes } = args
+      const db2 = getAdminClient()
+      const status = (interest_level === 'hot' ? 'interested' : 'answered') as 'interested' | 'answered'
+      const updates: { status: 'interested' | 'answered'; outcome: string; collected_email?: string; notes?: string } = {
+        status,
+        outcome: interest_level,
+        ...(email ? { collected_email: email } : {}),
+        ...(notes ? { notes } : {}),
+      }
+      if (call_log_id) {
+        await db2.from('outbound_call_logs').update(updates).eq('id', call_log_id)
+      }
+      results.push({
+        toolCallId,
+        result: email
+          ? `Saved interest level (${interest_level}) and email. We will follow up at ${email}.`
+          : `Saved interest level: ${interest_level}.`,
       })
       continue
     }

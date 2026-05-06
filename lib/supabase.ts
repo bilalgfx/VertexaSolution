@@ -102,9 +102,63 @@ type DB = {
         }
         Relationships: []
       }
+      outbound_campaigns: {
+        Row: {
+          id: string; name: string
+          status: 'draft' | 'running' | 'paused' | 'completed'
+          total_calls: number; answered: number; interested: number; booked: number
+          created_at: string
+        }
+        Insert: {
+          id?: string; name: string
+          status?: 'draft' | 'running' | 'paused' | 'completed'
+          total_calls?: number; answered?: number; interested?: number; booked?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string; name?: string
+          status?: 'draft' | 'running' | 'paused' | 'completed'
+          total_calls?: number; answered?: number; interested?: number; booked?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
+      outbound_call_logs: {
+        Row: {
+          id: string; campaign_id: string
+          contact_name: string | null; contact_phone: string
+          contact_company: string | null; contact_website: string | null
+          vapi_call_id: string | null
+          status: 'pending' | 'calling' | 'answered' | 'no_answer' | 'retry_scheduled' | 'interested' | 'not_interested' | 'booked' | 'failed'
+          outcome: string | null; retry_count: number; retry_at: string | null
+          collected_email: string | null; notes: string | null; created_at: string
+        }
+        Insert: {
+          id?: string; campaign_id: string
+          contact_name?: string | null; contact_phone: string
+          contact_company?: string | null; contact_website?: string | null
+          vapi_call_id?: string | null
+          status?: 'pending' | 'calling' | 'answered' | 'no_answer' | 'retry_scheduled' | 'interested' | 'not_interested' | 'booked' | 'failed'
+          outcome?: string | null; retry_count?: number; retry_at?: string | null
+          collected_email?: string | null; notes?: string | null; created_at?: string
+        }
+        Update: {
+          id?: string; campaign_id?: string
+          contact_name?: string | null; contact_phone?: string
+          contact_company?: string | null; contact_website?: string | null
+          vapi_call_id?: string | null
+          status?: 'pending' | 'calling' | 'answered' | 'no_answer' | 'retry_scheduled' | 'interested' | 'not_interested' | 'booked' | 'failed'
+          outcome?: string | null; retry_count?: number; retry_at?: string | null
+          collected_email?: string | null; notes?: string | null; created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      increment_campaign_answered: { Args: { campaign_id: string }; Returns: void }
+      increment_campaign_stat: { Args: { campaign_id: string; stat_col: string }; Returns: void }
+    }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>
   }

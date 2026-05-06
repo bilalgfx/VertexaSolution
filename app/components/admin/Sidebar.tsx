@@ -2,14 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Inbox, BarChart2, LogOut, Zap, CalendarCheck, Users, Mail, Settings } from 'lucide-react'
+import { LayoutDashboard, Inbox, BarChart2, LogOut, Zap, CalendarCheck, Users, Mail, Settings, Phone } from 'lucide-react'
 
 const nav = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/submissions', label: 'Submissions', icon: Inbox },
   { href: '/admin/appointments', label: 'Appointments', icon: CalendarCheck },
   { href: '/admin/leads', label: 'Leads', icon: Users },
-  { href: '/admin/campaigns', label: 'Campaigns', icon: Mail },
+  { href: '/admin/outbound', label: 'Outbound Calls', icon: Phone },
+  { href: '/admin/campaigns', label: 'Email Campaigns', icon: Mail },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart2 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
