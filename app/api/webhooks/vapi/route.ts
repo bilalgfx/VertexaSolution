@@ -80,8 +80,12 @@ export async function POST(request: Request) {
         continue
       }
 
-      // Parse day of week from date string (YYYY-MM-DD)
-      const dayOfWeek = new Date(date).getDay()
+      // Convert incoming time to admin timezone (PKT = UTC+5)
+      const adminTz = process.env.ADMIN_TIMEZONE ?? 'Asia/Karachi'
+      const dt = new Date(`${date}T${time}:00Z`)
+      const localTime = dt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: adminTz, hour12: false })
+      const localDate = dt.toLocaleDateString('en-CA', { timeZone: adminTz }) // YYYY-MM-DD
+      const dayOfWeek = new Date(`${localDate}T12:00:00`).getDay()
 
       const { data: avail } = await db
         .from('admin_availability')
@@ -95,14 +99,24 @@ export async function POST(request: Request) {
         continue
       }
 
-      // Check time is within working hours
-      if (time < avail.start_time || time >= avail.end_time) {
+      // Support overnight schedules (e.g. 16:00 to 10:00 crosses midnight)
+      const overnight = avail.start_time > avail.end_time
+      const inRange = overnight
+        ? localTime >= avail.start_time || localTime < avail.end_time
+        : localTime >= avail.start_time && localTime < avail.end_time
+
+      if (!inRange) {
+        const fmt = (t: string) => {
+          const [h, m] = t.split(':')
+          const hr = parseInt(h)
+          return `${hr > 12 ? hr - 12 : hr || 12}:${m} ${hr >= 12 ? 'PM' : 'AM'}`
+        }
+        const label = overnight
+          ? `${fmt(avail.start_time)} – ${fmt(avail.end_time)} (overnight)`
+          : `${fmt(avail.start_time)} – ${fmt(avail.end_time)}`
         results.push({
           toolCallId,
-          result: JSON.stringify({
-            available: false,
-            reason: `Working hours are ${avail.start_time} to ${avail.end_time}.`,
-          }),
+          result: JSON.stringify({ available: false, reason: `Available hours are ${label} PKT.` }),
         })
         continue
       }
@@ -111,8 +125,8 @@ export async function POST(request: Request) {
       const { data: conflict } = await db
         .from('appointments')
         .select('id')
-        .eq('scheduled_date', date)
-        .eq('scheduled_time', time)
+        .eq('scheduled_date', localDate)
+        .eq('scheduled_time', localTime)
         .eq('status', 'confirmed')
         .single()
 

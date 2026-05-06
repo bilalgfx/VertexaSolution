@@ -67,10 +67,17 @@ export default function SettingsPage() {
         <p className="text-zinc-500 text-sm">Configure your weekly availability for the AI call agent to book meetings.</p>
       </div>
 
+      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-violet-500/10 border border-violet-500/20 mb-6">
+        <Clock size={14} className="text-violet-400 shrink-0" />
+        <p className="text-sm text-violet-300">
+          All times are in <strong>Pakistan Standard Time (PKT, UTC+5)</strong>. The AI agent automatically converts for callers in other timezones. Overnight schedules are supported — e.g. set 16:00 to 10:00 for a 4PM–10AM shift.
+        </p>
+      </div>
+
       <div className="p-6 rounded-2xl bg-[#111111] border border-white/5 mb-6">
         <div className="flex items-center gap-2 mb-6">
           <Clock size={16} className="text-violet-400" />
-          <h2 className="font-semibold text-white">Weekly Availability</h2>
+          <h2 className="font-semibold text-white">Weekly Availability <span className="text-xs text-zinc-500 font-normal ml-1">(PKT)</span></h2>
         </div>
 
         <div className="space-y-3">
