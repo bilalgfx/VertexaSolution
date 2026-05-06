@@ -1,5 +1,10 @@
 import { getAdminClient } from '@/lib/supabase'
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+function validUUID(id: unknown): id is string {
+  return typeof id === 'string' && UUID_RE.test(id)
+}
+
 export async function POST(request: Request) {
   const secret = process.env.VAPI_WEBHOOK_SECRET
   if (secret && request.headers.get('x-vapi-secret') !== secret) {
@@ -56,7 +61,7 @@ export async function POST(request: Request) {
     if (fn.name === 'update_submission') {
       const { submission_id, field, new_value } = args
       const allowed = ['service', 'budget', 'message', 'company', 'website']
-      if (!submission_id || !field || !allowed.includes(field)) {
+      if (!validUUID(submission_id) || !field || !allowed.includes(field)) {
         results.push({ toolCallId, result: 'Invalid field or submission ID.' })
         continue
       }
@@ -144,16 +149,18 @@ export async function POST(request: Request) {
         continue
       }
 
-      // Fetch contact details from submission
+      // Only use submission_id if it's a real UUID — agent may pass placeholder text
+      const safeSubmissionId = validUUID(submission_id) ? submission_id : null
+
       let contactName: string | null = null
       let contactEmail: string | null = null
       let contactPhone: string | null = null
 
-      if (submission_id) {
+      if (safeSubmissionId) {
         const { data: sub } = await db
           .from('contact_submissions')
           .select('name, email, phone')
-          .eq('id', submission_id)
+          .eq('id', safeSubmissionId)
           .single()
         if (sub) {
           contactName = sub.name
@@ -163,7 +170,7 @@ export async function POST(request: Request) {
       }
 
       const { error } = await db.from('appointments').insert({
-        submission_id: submission_id || null,
+        submission_id: safeSubmissionId,
         contact_name: contactName,
         contact_email: contactEmail,
         contact_phone: contactPhone,
