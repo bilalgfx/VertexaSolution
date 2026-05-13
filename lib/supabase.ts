@@ -128,6 +128,7 @@ type DB = {
           id: string; campaign_id: string
           contact_name: string | null; contact_phone: string
           contact_company: string | null; contact_website: string | null
+          contact_industry: string | null
           vapi_call_id: string | null
           status: 'pending' | 'calling' | 'answered' | 'no_answer' | 'retry_scheduled' | 'interested' | 'not_interested' | 'booked' | 'failed'
           outcome: string | null; retry_count: number; retry_at: string | null
@@ -137,6 +138,7 @@ type DB = {
           id?: string; campaign_id: string
           contact_name?: string | null; contact_phone: string
           contact_company?: string | null; contact_website?: string | null
+          contact_industry?: string | null
           vapi_call_id?: string | null
           status?: 'pending' | 'calling' | 'answered' | 'no_answer' | 'retry_scheduled' | 'interested' | 'not_interested' | 'booked' | 'failed'
           outcome?: string | null; retry_count?: number; retry_at?: string | null
@@ -146,6 +148,7 @@ type DB = {
           id?: string; campaign_id?: string
           contact_name?: string | null; contact_phone?: string
           contact_company?: string | null; contact_website?: string | null
+          contact_industry?: string | null
           vapi_call_id?: string | null
           status?: 'pending' | 'calling' | 'answered' | 'no_answer' | 'retry_scheduled' | 'interested' | 'not_interested' | 'booked' | 'failed'
           outcome?: string | null; retry_count?: number; retry_at?: string | null

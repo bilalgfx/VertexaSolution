@@ -1,5 +1,10 @@
-const VAPI_KEY = "46311984-891c-46ee-b624-e0d624863b93";
-const ASSISTANT_ID = "d13c233c-fa92-47d2-a7d7-33fc4398f160";
+const VAPI_KEY = process.env.VAPI_API_KEY;
+const ASSISTANT_ID = process.env.VAPI_ASSISTANT_ID;
+
+if (!VAPI_KEY || !ASSISTANT_ID) {
+  console.error("Missing VAPI_API_KEY or VAPI_ASSISTANT_ID env vars");
+  process.exit(1);
+}
 
 const systemPrompt = `You are Alex, a sharp and natural-sounding sales rep for Vertexa Solution — a custom AI and software agency that builds AI automation, AI call agents, websites, and apps for businesses across every industry. You are calling business owners, founders, operations managers, and decision-makers to start a real conversation about how their business could run smarter.
 

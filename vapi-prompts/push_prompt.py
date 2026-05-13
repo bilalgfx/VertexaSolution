@@ -1,8 +1,14 @@
 import urllib.request
 import json
+import os
+import sys
 
-VAPI_KEY = "46311984-891c-46ee-b624-e0d624863b93"
-ASSISTANT_ID = "d13c233c-fa92-47d2-a7d7-33fc4398f160"
+VAPI_KEY = os.environ.get("VAPI_API_KEY")
+ASSISTANT_ID = os.environ.get("VAPI_ASSISTANT_ID")
+
+if not VAPI_KEY or not ASSISTANT_ID:
+    print("Missing VAPI_API_KEY or VAPI_ASSISTANT_ID env vars")
+    sys.exit(1)
 
 system_prompt = (
     "You are Alex, a sharp and natural-sounding sales rep for Vertexa Solution — a custom AI and software agency "
