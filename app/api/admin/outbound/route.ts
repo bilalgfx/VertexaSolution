@@ -44,12 +44,13 @@ export async function POST(request: NextRequest) {
 
   if (error || !campaign) return Response.json({ error: error?.message }, { status: 500 })
 
-  const logs = contacts.map((c: { name?: string; phone: string; company?: string; website?: string }) => ({
+  const logs = contacts.map((c: { name?: string; phone: string; company?: string; website?: string; industry?: string }) => ({
     campaign_id: campaign.id,
     contact_name: c.name ?? null,
     contact_phone: c.phone,
     contact_company: c.company ?? null,
     contact_website: c.website ?? null,
+    contact_industry: c.industry ?? null,
     status: 'pending' as const,
   }))
 

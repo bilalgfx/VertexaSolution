@@ -53,6 +53,8 @@ export async function POST(request: NextRequest) {
         assistantOverrides: {
           variableValues: {
             customerName: log.contact_name ?? 'there',
+            businessName: log.contact_company ?? '',
+            industry: log.contact_industry ?? '',
             callLogId: log.id,
             campaignId,
           },

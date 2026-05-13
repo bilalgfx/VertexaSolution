@@ -27,7 +27,7 @@ type CallLog = {
   created_at: string
 }
 
-type Contact = { name: string; phone: string; company: string; website: string }
+type Contact = { name: string; phone: string; company: string; website: string; industry: string }
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-zinc-500/10 text-zinc-400',
@@ -95,7 +95,7 @@ export default function OutboundPage() {
     const lines = text.trim().split('\n').filter(Boolean)
     return lines.slice(lines[0].toLowerCase().includes('phone') ? 1 : 0).map(line => {
       const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''))
-      return { name: cols[0] ?? '', phone: cols[1] ?? '', company: cols[2] ?? '', website: cols[3] ?? '' }
+      return { name: cols[0] ?? '', phone: cols[1] ?? '', company: cols[2] ?? '', website: cols[3] ?? '', industry: cols[4] ?? '' }
     }).filter(c => c.phone)
   }
 
@@ -111,8 +111,8 @@ export default function OutboundPage() {
     const lines = manualText.trim().split('\n').filter(Boolean)
     const parsed = lines.map(line => {
       const parts = line.split(',').map(p => p.trim())
-      if (parts.length === 1) return { name: '', phone: parts[0], company: '', website: '' }
-      return { name: parts[0], phone: parts[1], company: parts[2] ?? '', website: parts[3] ?? '' }
+      if (parts.length === 1) return { name: '', phone: parts[0], company: '', website: '', industry: '' }
+      return { name: parts[0], phone: parts[1], company: parts[2] ?? '', website: parts[3] ?? '', industry: parts[4] ?? '' }
     }).filter(c => c.phone)
     setContacts(parsed)
   }
@@ -125,6 +125,7 @@ export default function OutboundPage() {
         phone: l.phone!,
         company: l.company ?? '',
         website: '',
+        industry: '',
       }))
 
   const allContacts = addTab === 'leads' ? leadsToContacts() : contacts
@@ -356,7 +357,7 @@ export default function OutboundPage() {
                     >
                       <Upload size={24} className="text-zinc-600 mx-auto mb-2" />
                       <p className="text-sm text-zinc-400">Click to upload CSV</p>
-                      <p className="text-xs text-zinc-600 mt-1">Columns: Name, Phone, Company, Website</p>
+                      <p className="text-xs text-zinc-600 mt-1">Columns: Name, Phone, Company, Website, Industry</p>
                     </div>
                     <input ref={fileRef} type="file" accept=".csv,.txt" className="hidden" onChange={handleCSV} />
                     {contacts.length > 0 && <p className="text-xs text-green-400 mt-2">✓ {contacts.length} contacts loaded</p>}
@@ -369,7 +370,7 @@ export default function OutboundPage() {
                       value={manualText}
                       onChange={e => setManualText(e.target.value)}
                       rows={6}
-                      placeholder={"+1 929 520 5538\nJohn Smith, +1 929 520 5538, Acme Inc\nJane Doe, +44 7700 900123, Global Corp, globalcorp.com"}
+                      placeholder={"+1 929 520 5538\nJohn Smith, +1 929 520 5538, Acme Inc, acme.com, Ecommerce\nJane Doe, +44 7700 900123, Global Corp, globalcorp.com, Retail"}
                       className="w-full px-4 py-3 rounded-xl bg-[#0a0a0a] border border-white/10 text-white text-xs placeholder-zinc-600 focus:outline-none focus:border-violet-500/50 resize-none font-mono mb-2"
                     />
                     <button onClick={parseManual} className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white text-xs transition-all">
