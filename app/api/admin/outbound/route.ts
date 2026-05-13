@@ -69,3 +69,16 @@ export async function PATCH(request: NextRequest) {
   if (error) return Response.json({ error: error.message }, { status: 500 })
   return Response.json({ success: true })
 }
+
+export async function DELETE(request: NextRequest) {
+  if (!(await isAuthed(request))) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { id } = await request.json()
+  if (!id) return Response.json({ error: 'id required' }, { status: 400 })
+
+  const db = getAdminClient()
+  // outbound_call_logs has ON DELETE CASCADE so only need to delete the campaign
+  const { error } = await db.from('outbound_campaigns').delete().eq('id', id)
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  return Response.json({ success: true })
+}

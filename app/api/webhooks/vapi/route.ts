@@ -169,6 +169,26 @@ export async function POST(request: Request) {
         }
       }
 
+      // For outbound calls: look up call log by VAPI call ID and use its contact info
+      const vapiCallId = body.call?.id ?? message.call?.id
+      let outboundLogId: string | null = null
+      let outboundCampaignId: string | null = null
+
+      if (vapiCallId && !safeSubmissionId) {
+        const { data: outboundLog } = await db
+          .from('outbound_call_logs')
+          .select('id, campaign_id, contact_name, contact_phone, collected_email')
+          .eq('vapi_call_id', vapiCallId)
+          .single()
+        if (outboundLog) {
+          outboundLogId = outboundLog.id
+          outboundCampaignId = outboundLog.campaign_id
+          contactName = outboundLog.contact_name
+          contactPhone = outboundLog.contact_phone
+          contactEmail = outboundLog.collected_email ?? null
+        }
+      }
+
       const { error } = await db.from('appointments').insert({
         submission_id: safeSubmissionId,
         contact_name: contactName,
@@ -178,6 +198,13 @@ export async function POST(request: Request) {
         scheduled_time: time,
         status: 'confirmed',
       })
+
+      if (!error && outboundLogId) {
+        await db.from('outbound_call_logs').update({ status: 'booked' }).eq('id', outboundLogId)
+        if (outboundCampaignId) {
+          await db.rpc('increment_campaign_stat', { campaign_id: outboundCampaignId, stat_col: 'booked' })
+        }
+      }
 
       results.push({
         toolCallId,
