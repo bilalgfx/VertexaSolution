@@ -42,7 +42,7 @@ const milestones = [
 const founder = {
   name: "Muhammad Bilal",
   role: "Founder & CEO",
-  bio: "Entrepreneur and AI strategist with a background in growth and operations. Built Vertexa to give startups and businesses access to custom-built AI and software without the enterprise price tag. Muhammad is passionate about helping businesses leverage technology to solve real problems and drive growth.",
+  bio: "Entrepreneur and AI strategist with a background in growth and operations. Built Vertexa to give startups and businesses access to custom-built AI and software without the enterprise price tag.",
   image: "/Founder.jpg",
 };
 
