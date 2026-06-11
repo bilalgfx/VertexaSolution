@@ -49,15 +49,15 @@ const founder = {
 const team = [
   {
     name: "Shameer Basharat",
-    role: "Developer & Team Manager",
-    bio: "Full-stack developer and project manager building software solutions for startups and enterprises. Leads our development team and ensures every project is delivered on time and to spec.",
-    image: null,
+    role: "Marketing & Operations Manager",
+    bio: "Marketing strategist and operations guru. Keeps our projects running smoothly and makes sure the world knows about the custom solutions we build.",
+    image: "/team-shameer.jpg",
   },
   {
     name: "Shahbaz Ali",
-    role: "UI/UX Designer",
-    bio: "Creative designer specializing in user interfaces and experiences. Shapes the look and feel of our web and app projects, ensuring they're not only functional but also a delight to use.",
-    image: null,
+    role: "Lead Generation & Outreach Specialist",
+    bio: "Lead gen expert and outreach specialist. Connects us with startups and businesses that can benefit from our custom AI and software solutions.",
+    image: "/team-shahbaz.jpg",
   },
 ];
 
@@ -175,17 +175,23 @@ export default function AboutPage() {
 
         {/* Rest of team */}
         <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-          {team.map(({ name, role, bio }) => (
-            <div key={name} className="p-6 rounded-2xl bg-[#111111] border border-white/5 hover:border-violet-500/20 transition-all text-center">
-              <div className="w-16 h-16 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl text-zinc-600">👤</span>
-              </div>
-              <div className="font-bold mb-0.5">{name}</div>
-              <div className="text-xs text-violet-400 font-medium mb-3">{role}</div>
-              <div className="text-sm text-zinc-500 leading-relaxed">{bio}</div>
-            </div>
-          ))}
-        </div>
+  {team.map(({ name, role, bio, image }) => (
+    <div key={name} className="p-6 rounded-2xl bg-[#111111] border border-white/5 hover:border-violet-500/20 transition-all text-center">
+      <div className="w-16 h-16 rounded-full border border-violet-500/20 mx-auto mb-4 overflow-hidden">
+  <Image
+    src={image}
+    alt={name}
+    width={64}
+    height={64}
+    className="w-full h-full object-cover object-top"
+  />
+</div>
+      <div className="font-bold mb-0.5">{name}</div>
+      <div className="text-xs text-violet-400 font-medium mb-3">{role}</div>
+      <div className="text-sm text-zinc-500 leading-relaxed">{bio}</div>
+    </div>
+  ))}
+</div>
       </section>
 
       {/* Stats */}
